@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { createUser } from "../api/userAction";
 import { showUser } from '../api/userdataRead';
-
+import { deleteUser } from "../api/userDelete";
 // create
 export const userDetail = createSlice({
   name: "userDetails",
@@ -31,6 +31,24 @@ export const userDetail = createSlice({
         state.loading = false;
       })
       .addCase(showUser.rejected, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        // state.user = action.payload; // send the payload to user
+        // state.loading = false;
+        
+        const {id}=action.payload;
+        if(id){
+          state.user=state.user.filter((ele)=>ele.id !==id)
+        }
+        console.log('delete payload',action.payload);
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;
         state.user = action.payload;
         state.error = null;
